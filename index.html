@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Configurar el atributo lang</title>
+</head>
+<body>
+    <main class="main_content">
+        <h1>Cambiar idioma EMMET</h1>
+        <section>
+            <h2>Archivo de personalización</h2>
+            <p>Lo primero que debemos hacer es buscar una carpeta que tengamos a mano (vale en cualquier sitio del disco duro) en la que vamos a crear un archivo de configuración.</p>
+            <p>Dentro de esta carpeta crea un archivo llamado <strong><code>snippets.json</code></strong> (el nombre es importante). Este archivo contiene datos en formato JSON sobre la configuración de Emmet.</p>
+            <p>
+                En el archivo de configuración de emmet (settings.json) el comando a añadir sería por ejemplo:
+                <pre>
+                    "emmet.extensionsPath": "C:\\emmet"
+                </pre>
+            </p>
+        </section>
+        <section>
+            <h2>Sección <em>variables</em></h2>
+            <p>La primera propiedad/sección que nos interesa es <code>variables</code>. Nos permite cambiar el valor por defecto de ciertas variables que usa Emmet y que use lo que le digamos. Si vamos a ver <a href="https://github.com/microsoft/vscode/blob/master/extensions/emmet/package.json" target="_blank">el código del <em>plugin</em></a>&nbsp;(línea 55) vemos que en realidad sólo permite personalizar dos variables <strong><code>lang</code></strong> y <strong><code>charset</code></strong> que se corresponden respectivamente con el idioma de la página y la codificación por defecto de ésta, que se usan precisamente con la abreviatura <code>html:5</code> que es la que nos interesa. Así que podemos meter como contenido del archivo simplemente esto:</p>
+            <pre><code>{<br>   "variables": {<br>      "lang": "es"<br>   }<br>}</code></pre>
+            <p>Con esto ya tenemos solucionado el primer punto de los anteriores: el idioma por defecto, que ahora saldrá el español.</p>
+        </section>
+        <section>
+            <h2>Sección <em>snippets</em></h2>
+            <p>Otra de las propiedades/secciones de ese JSON es la que se llama <strong><code>html</code></strong>&nbsp;que a su vez tiene otra propiedad llamada <strong><code>snippets</code></strong> que es la nos permite añadir plantillas de abreviaturas que podemos utilizar al escribir el código. Así, por ejemplo, <strong>para redefinir la plantilla para <code>html:5</code></strong> lo que tendremos que escribir es esto:</p>
+            <pre><code>"html": {<br>    "snippets": {<br>       "html:5": "CÓDIGO EMMET PARA LA PLANTILLA"<br>   }<br></code>}</pre>
+            <p>El código Emmet que pongamos ahí es lo que va a expandirse automáticamente cuando escribamos esta abreviatura y pulsemos <code>TAB</code>. En este caso el código que yo he utilizado es el siguiente:</p>
+            <pre><code>!!!+html[lang=${lang}]&gt;(head&gt;meta[charset=UTF-8]+meta[name=viewport content=\"width=device-width, initial-scale=1.0\"]+title{${1:Título de la página}})+body</code></pre>
+            <p>Vamos a ver qué significa:</p>
+            <ul>
+                <li><strong><code>!!!</code></strong>: en Emmet estas tres admiraciones se utilizan para generar el nodo raíz del HTML que estemos generando, usando la versión indicada. En este caso, como es HTML5 lo que va a generar es simplemente el <code>DOCTYPE</code>:&nbsp;<code>&lt;!DOCTYPE html&gt;</code>.</li>
+                <li><strong>+</strong>: concatena en el mismo nivel el resultado de otra expresión Emmet.</li>
+                <li><strong><code>html[lang=${lang}]</code></strong>: genera la etiqueta <code>&lt;html&gt;</code> con el atributo <code>lang</code> establecido con el valor de la variable <code>lang</code>, de la sección que acabamos de ver. En las plantillas, las variables se sustituyen usando la sintaxis <code>${nombreVariable}</code>. Si nos hemos inventado una variable podremos sustituirla de esta manera.</li>
+                <li><strong><code>&gt;</code></strong>: quiere decir que el siguiente elemento Emmet va a ser hijo del&nbsp;anterior, en este caso del nodo <code>&lt;html&gt;</code>. Los paréntesis a continuación agrupan a un conjunto de expresiones de Emmet para que san todas hijas del nodo anterior.</li>
+                <li><strong><code>head</code></strong>: etiqueta <code>&lt;head&gt;</code>.</li>
+                <li><strong><code>meta[charset=UTF-8]</code></strong>: etiqqueta <code>&lt;meta&gt;</code> con el atributo <code>charset</code> establecido como UTF-8. Podría haber utilizado la variable <code>charset</code>, pero yo siempre creo los archivos como UTF-8 así que no me interesa tampoco.</li>
+                <li><strong><code>meta...</code></strong>: el "meta" que define el <em>viewport</em>. Podría haberle metido alguna variable de tipo comodín (que veremos ahora mismo), como tiene la abreviatura original, pero tampoco me interesa porque en el 99,9% de los casos voy a querer este valor por defecto.</li>
+                <li><strong><code>title{${1:Título de la página}}</code></strong>: este es el título de la página.&nbsp;El primer juego de llaves es sintaxis Emmet que se utiliza para especificar que lo de dentro es texto constante y no etiquetas HTML. Pero dentro se usa una expresión similar a la de antes con variables: <code>${n:texto}</code>.&nbsp;Estas expresiones que comienzan con un número seguido de dos puntos sirven para especificar contenidos que van a ser <strong>comodines de la plantilla</strong>. El número indica en qué orden pasará el tabulador por ellos y lo normal es&nbsp;numerarlos en el orden en e que aparecen en la expresión total. En este caso lo que se hace es que para el título de la página se le pone el valor por defecto:&nbsp;<code>"Título de la página"</code> y acto seguido se coloca el curso encima con el&nbsp;valor seleccionado de modo que sólo tienes que empezar a escribir para sustituirlo por otra cosa. ¡Súpercómodo!.</li>
+                <li><strong><code>body</code></strong>: el cuerpo de la página.</li>
+                </ul>
+                <p>Con esto, el contenido final del archivo es el siguiente:</p>
+                <pre><code>{<br>   "variables": {<br>      "lang": "es"<br>   },<br>   "html": {<br>      "snippets": {<br>         "html:5": "!!!+html[lang=${lang}]&gt;(head&gt;meta[charset=UTF-8]+meta[name=viewport content=\"width=device-width, initial-scale=1.0\"]+title{${1:Título de la página}})+body"<br>      }<br>   }<br>}</code></pre>
+                <p>Te lo dejo listo para utilizar en <a href="/descargas/vscode-emmet-snippets.json-JASoft.org.zip">un ZIP aquí</a> (300 bytes).</p>
+        </section>
+    </main>
+</body>
+</html>

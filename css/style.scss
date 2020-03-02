@@ -1,0 +1,39 @@
+@font-face{
+    font-family: Roboto;
+    src: url(../fonts/Roboto-Regular.ttf);
+}
+:root{
+    font-family: Roboto, sans-serif;
+    font-size: 1.2em;
+}
+pre{
+   padding: .5em;
+
+    background-image: url(../images/wall.jpg);
+    background-repeat: repeat-y;
+}
+
+img{
+    width: 100%;
+}
+
+h1,h2{
+    text-transform: uppercase;
+}
+
+    
+   
+
+
+.main_content{
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+   
+}
+
+@media screen and (max-width:600px){
+    body{
+        display: block;
+    }
+}
